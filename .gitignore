@@ -32,7 +32,8 @@ Thumbs.db
 # Foundry
 cache/
 broadcast/
-lib/
+# Note: lib/ is our source code, not Foundry libs
+# Foundry libs would be in a separate directory if used
 
 # Logs
 *.log
