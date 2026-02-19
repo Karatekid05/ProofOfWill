@@ -23,11 +23,11 @@
 2. **Deploy vault (once)**  
    With [Foundry](https://book.getfoundry.sh):
    ```bash
-   forge install foundry-rs/forge-std --no-commit
-   export PRIVATE_KEY=0x...
-   forge script scripts/Deploy.s.sol --rpc-url https://rpc.testnet.arc.network --broadcast
+   forge install foundry-rs/forge-std
+   export PRIVATE_KEY=0x...  # ⚠️ Never commit or share your private key!
+   forge script scripts/Deploy.s.sol --rpc-url https://rpc.testnet.arc.network --broadcast -vvv
    ```
-   Set `NEXT_PUBLIC_COMMITMENT_VAULT_ADDRESS` in `.env` to the deployed address.
+   The script will output the deployed contract address. Copy it to `NEXT_PUBLIC_COMMITMENT_VAULT_ADDRESS` in `.env`.
 
 3. **Get testnet USDC**  
    [Circle Faucet](https://faucet.circle.com) → select **Arc Testnet** and request USDC.
@@ -52,3 +52,18 @@
 ## Contract
 
 - `contracts/CommitmentVault.sol` — single contract: receive USDC, store commitments, resolve and payout. No separate Factory in this MVP.
+
+## What it does
+
+**Proof of Will** lets you lock USDC onchain tied to a commitment/goal:
+
+- **Create a commitment:** Set amount, deadline, optional verifier, and penalty receiver. Lock USDC into the vault.
+- **Track progress:** Dashboard shows all commitments (active, pending resolution, resolved).
+- **Resolve:** After deadline, creator or verifier calls resolve(success/fail). Success → refund to creator. Fail → USDC sent to penalty receiver.
+
+**Use cases:** Freelancer escrows, founder milestones, DAO accountability, personal finance discipline.
+
+## Status
+
+✅ **MVP complete** — Frontend, contracts, and wallet integration working on Arc Testnet.  
+⚠️ **Testnet only** — Not deployed to mainnet. Use testnet USDC from Circle Faucet.

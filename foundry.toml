@@ -4,6 +4,8 @@ out = "out"
 libs = ["lib"]
 solc = "0.8.20"
 evm_version = "cancun"
+# Default RPC so forge doesn't fall back to localhost:8545
+eth_rpc_url = "https://rpc.testnet.arc.network"
 
 [profile.default.fmt]
 line_length = 100
