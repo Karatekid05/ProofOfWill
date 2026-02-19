@@ -18,35 +18,23 @@ Escrow where **money only moves when both agree**: freelance (client + worker), 
 
 ## Phases
 
-### 1. Today (MVP)
+### 1. Live now
 
-- **Single verifier**: one party locks capital; creator or verifier can resolve (success / fail).
-- Contracts: `CommitmentVault`, `CommitmentFactory` on Arc Testnet.
-- Frontend: create agreement, dashboard (All / Active / Pending / Resolved), resolve onchain.
-- Useful for commitments where a third party confirms the result.
+- **Dual consensus**: `DualConsensusVault` on Arc Testnet. Two parties; create → other accepts (and optionally locks) → both submit same outcome to release. Modes: one-deposits-one-receives, both-deposit-one-receives (e.g. freelancer guarantee, bets).
+- **V2**: Emergency recovery (deadline + 30 days; owner refunds each party only; justification hash for audit). Protocol fee on release (`setFee(feeRecipient, feeBps)`). Optional title/description hash via `createAgreementWithMeta`.
+- **Legacy commitments**: `CommitmentVault` + `CommitmentFactory` — single verifier can resolve (success / fail).
+- Frontend: create agreement (optional title/description), dashboard (Agreements + Commitments), share link, accept, submit resolution.
 
-### 2. Next: Dual consensus + two types
+### 2. Next: Disputes and timeouts
 
-- **New contract** (or extension) with two parties: e.g. `partyA` and `partyB`.
-- Each submits a decision onchain: `done`, `cancel`, or (for bets) `A_wins` / `B_wins`.
-- Funds only release when **both submissions match**.
-  - Both «done» → payment to worker (or bet winner).
-  - Both «cancel» → refund to depositor(s) (each gets own stake in both-deposit mode).
-  - Mismatch → dispute; funds stay locked.
-- Support both modes: one-deposits-one-receives and both-deposit-one-receives (e.g. freelancer guarantee).
-- Re-vote flow until consensus (or timeout / dispute in phase 3).
+- When one says done and the other cancel: **deadline** for the other party to respond (e.g. 7 days).
+- Rules at creation: what happens if no response (e.g. refund to depositor, or open dispute).
+- Re-vote until consensus stays; timeout adds a way to unblock.
 
-### 3. Later: Disputes and timeouts
+### 3. Later: Arbitration
 
-- If one says done and the other cancel: **deadline** for the other party to respond (e.g. 7 days).
-- Rules set at creation: what happens if no response (e.g. refund to depositor, or open dispute).
+- **Protocol fee**: Implemented in V2 (owner sets `feeRecipient` and `feeBps`; fee on release only).
 - Optional: **arbitration** (third party decides on deadlock); cost and process defined in the contract.
-
-### 4. Sustainability: Protocol fee
-
-- **Fee on resolution**: e.g. 0.5–1% of released amount, or fixed fee per agreement.
-- Charged in-contract (on release) or via frontend; TBD.
-- Part of the fee can fund incentives (e.g. tips, rewards) to encourage usage.
 
 ---
 
@@ -70,8 +58,6 @@ Escrow where **money only moves when both agree**: freelance (client + worker), 
 
 ## Next technical steps
 
-1. Design and implement **dual-consensus contract** (two parties, dual submission, release only on match); support one-deposits and both-deposit modes.
-2. Update frontend: create two-party agreement, UI for each party to submit decision, consensus vs dispute indicator.
-3. Add **timeout** and dispute rules in contract and UI.
-4. Implement **protocol fee** (amount and where it’s taken) and reflect in UI.
-5. Keep docs and copy in English; README and metadata aligned with the vision.
+1. Add **timeout** and dispute rules in contract and UI (deadline to respond, default outcome).
+2. Implement **protocol fee** (amount and where it’s taken) and reflect in UI.
+3. Optional: arbitration flow for permanent deadlock.

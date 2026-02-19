@@ -2,8 +2,9 @@ import type { Metadata, Viewport } from 'next'
 import { Space_Grotesk, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
-import { Providers } from '@/components/providers'
-import './globals.css'
+import { Providers } from "@/components/providers"
+import { TermsGate } from "@/components/terms-gate"
+import "./globals.css"
 
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" })
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
@@ -44,7 +45,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <Providers>{children}</Providers>
+        <Providers>
+          <TermsGate>{children}</TermsGate>
+        </Providers>
         <Toaster theme="dark" position="top-right" />
         <Analytics />
       </body>

@@ -73,9 +73,9 @@ contract CommitmentVault {
         c.success = success;
 
         if (success) {
-            usdc.transfer(c.creator, c.amount);
+            require(usdc.transfer(c.creator, c.amount), "Transfer failed");
         } else {
-            usdc.transfer(c.penaltyReceiver, c.amount);
+            require(usdc.transfer(c.penaltyReceiver, c.amount), "Transfer failed");
         }
 
         emit CommitmentResolved(id, success);

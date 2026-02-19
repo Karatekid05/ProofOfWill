@@ -1,24 +1,19 @@
 export function RoadmapSection() {
   const phases = [
     {
-      phase: "Today (MVP)",
-      title: "Single verifier",
-      body: "One party locks capital; creator or verifier can resolve (success / fail). You can already use it for commitments with a third party confirming.",
+      phase: "Live now",
+      title: "Dual consensus agreements",
+      body: "Two parties, both submit the same outcome to release. One deposits or both deposit (freelancer guarantee, bets). Plus legacy commitments (single verifier). All on Arc Testnet.",
     },
     {
       phase: "Next",
-      title: "Dual consensus + two types",
-      body: "New contract: two parties. Money only moves when both submit the same decision onchain. Two modes: (1) One deposits, one receives — e.g. client locks, freelancer gets paid when both agree. (2) Both deposit, one receives — e.g. freelancer guarantee; client can get both stakes back if both agree the work wasn't delivered. Same for bets: both lock, one wins the pot when both agree.",
+      title: "Disputes and timeouts",
+      body: "When one says done and the other cancel: add a deadline for the other to respond. If no response, apply a default (e.g. refund to depositor). Defined at agreement creation.",
     },
     {
       phase: "Later",
-      title: "Disputes and timeouts",
-      body: "If one says done and the other cancel: deadline for the other party to respond (e.g. 7 days). If no response, default rule (e.g. refund to depositor) or future arbitration. All defined at agreement creation.",
-    },
-    {
-      phase: "Sustainability",
-      title: "Protocol fee",
-      body: "Small fee on resolution (e.g. 0.5–1% of released amount, or fixed fee per agreement) to sustain the project. Optional: part of the fee as incentives. To be decided with the community.",
+      title: "Protocol fee and arbitration",
+      body: "Small fee on resolution to sustain the project. Optional: arbitration or escalation if the two never agree (e.g. third party decides).",
     },
   ]
 
@@ -30,7 +25,7 @@ export function RoadmapSection() {
             Roadmap
           </span>
           <h2 className="mt-2 max-w-xl text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            From single verifier to dual consensus, disputes and fee
+            Roadmap
           </h2>
         </div>
 

@@ -3,17 +3,17 @@ export function HowItWorksSection() {
     {
       num: "01",
       title: "Agree and lock",
-      body: "The two parties set amount, deadline, and what counts as «done» or «cancel». One or both lock USDC onchain (one-deposits: only the payer; both-deposit: each locks their stake). Everything is recorded on the contract.",
+      body: "Set amount and deadline. You (or both) lock USDC onchain.",
     },
     {
       num: "02",
       title: "Work or play out",
-      body: "The work is delivered or the event (game, milestone) happens. Funds sit in the vault. No one can move them alone.",
+      body: "Do the work or play the game. Funds stay in the contract.",
     },
     {
       num: "03",
-      title: "Resolve by consensus",
-      body: "Each party submits their decision onchain (done, cancel, or who won). The contract only releases funds when both submissions match: to the worker, back to the client, or to the bet winner. No match means funds stay locked.",
+      title: "Both submit same outcome",
+      body: "Done, cancel, or who won. Contract pays out only when both match.",
     },
   ]
 

@@ -24,6 +24,7 @@ import { useAcceptAgreement } from "@/hooks/useAcceptAgreement"
 import { useSubmitResolution } from "@/hooks/useSubmitResolution"
 import { useAccount } from "wagmi"
 import { arcTestnet } from "@/lib/arc-chain"
+import { getAgreementMeta } from "@/lib/agreement-meta"
 
 interface AgreementCardProps {
   agreement: Agreement
@@ -37,6 +38,10 @@ export function AgreementCard({ agreement, refetch }: AgreementCardProps) {
   const { accept, isPending: isAcceptPending, isSuccess: acceptSuccess, hash: acceptHash } = useAcceptAgreement()
   const { submit, isPending: isSubmitPending, isSuccess: submitSuccess, hash: submitHash } = useSubmitResolution()
   const [resolution, setResolution] = useState<1 | 2 | 3>(1)
+  const [meta, setMeta] = useState<{ title: string; description: string } | null>(null)
+  useEffect(() => {
+    setMeta(getAgreementMeta(agreement.id))
+  }, [agreement.id])
 
   useEffect(() => {
     if (acceptSuccess && acceptHash) {
@@ -79,8 +84,13 @@ export function AgreementCard({ agreement, refetch }: AgreementCardProps) {
             {role && <span className="text-[10px] rounded bg-secondary px-1.5 py-0.5 text-muted-foreground">You: {role === "partyA" ? "Party A" : "Party B"}</span>}
           </div>
           <h3 className="text-base font-semibold text-foreground">
-            {isOneDeposit ? "One deposit" : "Both deposit"} · {agreement.amountA} USDC{!isOneDeposit ? ` + ${agreement.amountB} USDC` : ""}
+            {meta?.title?.trim() || (isOneDeposit ? "One deposit" : "Both deposit") + ` · ${agreement.amountA} USDC` + (!isOneDeposit ? ` + ${agreement.amountB} USDC` : "")}
           </h3>
+          {meta?.title?.trim() && (
+            <p className="text-xs text-muted-foreground">
+              {isOneDeposit ? "One deposit" : "Both deposit"} · {agreement.amountA} USDC{!isOneDeposit ? ` + ${agreement.amountB} USDC` : ""}
+            </p>
+          )}
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={copyLink} title="Copy share link">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Header } from "@/components/header"
@@ -27,6 +27,7 @@ import {
   outcomeLabel,
 } from "@/lib/agreements"
 import { HAS_DUAL_VAULT } from "@/lib/contracts"
+import { getAgreementMeta } from "@/lib/agreement-meta"
 import { Loader2, Copy, ArrowLeft } from "lucide-react"
 
 export default function AgreementDetailPage() {
@@ -41,6 +42,10 @@ export default function AgreementDetailPage() {
   const agreement = raw && Array.isArray(raw) && raw.length >= 9 ? parseAgreement(id, raw as readonly [string, string, bigint, bigint, bigint, number, number, number, number]) : null
   const role = agreement ? myRole(agreement, address ?? "") : null
   const awaiting = agreement ? isAwaitingMyAction(agreement, address ?? "") : false
+  const [meta, setMeta] = useState<{ title: string; description: string } | null>(null)
+  useEffect(() => {
+    if (!isNaN(id)) setMeta(getAgreementMeta(id))
+  }, [id])
 
   useEffect(() => {
     if (acceptSuccess && acceptHash) {
@@ -139,9 +144,15 @@ export default function AgreementDetailPage() {
               {role && <span className="rounded bg-secondary px-1.5 py-0.5 text-[10px] text-muted-foreground">You: {role === "partyA" ? "Party A" : "Party B"}</span>}
             </div>
             <h1 className="text-xl font-bold text-foreground">
-              {isOneDeposit ? "One deposit" : "Both deposit"} · {agreement.amountA} USDC
-              {!isOneDeposit ? ` + ${agreement.amountB} USDC` : ""}
+              {meta?.title?.trim() || (isOneDeposit ? "One deposit" : "Both deposit") + ` · ${agreement.amountA} USDC` + (!isOneDeposit ? ` + ${agreement.amountB} USDC` : "")}
             </h1>
+            {meta?.title?.trim() && (
+              <p className="text-sm text-muted-foreground">
+                {isOneDeposit ? "One deposit" : "Both deposit"} · {agreement.amountA} USDC
+                {!isOneDeposit ? ` + ${agreement.amountB} USDC` : ""}
+              </p>
+            )}
+            {meta?.description?.trim() && <p className="whitespace-pre-wrap text-sm text-muted-foreground">{meta.description}</p>}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div>
                 <span className="text-[10px] uppercase text-muted-foreground">Party A</span>

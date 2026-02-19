@@ -11,11 +11,11 @@ export function CtaSection() {
               Money only moves when both agree.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Create an agreement or bet, lock USDC on Arc Testnet. On resolution, both parties must submit the same decision. Today: single verifier (MVP). Coming: dual consensus — one deposits / one receives, or both deposit / one receives (e.g. freelancer guarantee).
+              Lock USDC on Arc Testnet. Both submit the same outcome to release. No middleman.
             </p>
           </div>
           <Link
-            href="/create"
+            href="/create/agreement"
             className="inline-flex h-12 items-center gap-2 rounded-sm bg-primary px-8 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Launch App

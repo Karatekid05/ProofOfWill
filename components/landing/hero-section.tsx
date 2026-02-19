@@ -26,12 +26,16 @@ export function HeroSection() {
             </h1>
 
             <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-              Two consensus types: one party deposits and the other receives (e.g. client locks pay, freelancer gets it when both mark done). Or both deposit and one receives — like a freelancer putting up a guarantee so the client can get both stakes back if the work isn&apos;t delivered. Bets between friends: both lock the same amount; both must agree on the winner. No consensus, funds stay locked.
+              Freelance: you lock pay, they get it when you both mark done. Bets: you both lock; you both pick the winner. No deal? Funds stay locked.
             </p>
+            <ul className="mt-4 max-w-lg list-inside list-disc space-y-1 text-sm text-muted-foreground">
+              <li>One deposits or both deposit (e.g. freelancer guarantee)</li>
+              <li>Other party accepts; both submit the same outcome to release</li>
+            </ul>
 
             <div className="mt-10 flex items-center gap-4">
               <Link
-                href="/create"
+                href="/create/agreement"
                 className="inline-flex h-11 items-center gap-2 rounded-sm bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Create agreement
@@ -60,7 +64,7 @@ export function HeroSection() {
                   { label: "Chain", value: "Arc Testnet" },
                   { label: "Asset", value: "USDC" },
                   { label: "Resolution", value: "Dual consensus" },
-                  { label: "Backend", value: "None" },
+                  { label: "Custody", value: "On-chain" },
                 ].map((stat) => (
                   <div key={stat.label} className="flex items-center justify-between px-4 py-3">
                     <span className="text-xs text-muted-foreground">{stat.label}</span>

@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 export function Footer() {
   return (
     <footer className="border-t border-border">
@@ -10,7 +12,10 @@ export function Footer() {
             DualAgree
           </span>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-4 md:gap-6">
+          <Link href="/terms" className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+            Terms of Service
+          </Link>
           <span className="text-xs text-muted-foreground">
             No backend. No middlemen. Just code.
           </span>

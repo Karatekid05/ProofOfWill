@@ -277,6 +277,21 @@ export const dualConsensusVaultAbi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      { name: "partyB", type: "address" },
+      { name: "amountA", type: "uint256" },
+      { name: "amountB", type: "uint256" },
+      { name: "deadline", type: "uint256" },
+      { name: "mode", type: "uint8" },
+      { name: "metaHash", type: "bytes32" },
+    ],
+    name: "createAgreementWithMeta",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  { inputs: [{ name: "id", type: "uint256" }], name: "agreementMetaHash", outputs: [{ name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
   { inputs: [{ name: "id", type: "uint256" }], name: "accept", outputs: [], stateMutability: "nonpayable", type: "function" },
   { inputs: [{ name: "id", type: "uint256" }], name: "acceptAndLock", outputs: [], stateMutability: "nonpayable", type: "function" },
   {

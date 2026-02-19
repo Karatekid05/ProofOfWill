@@ -1,7 +1,7 @@
 import { USDC_DECIMALS } from "./contracts"
 
 export type AgreementMode = 0 | 1 // OneDeposit | BothDeposit
-export type AgreementStatus = 0 | 1 | 2 // Created | Active | Resolved
+export type AgreementStatus = 0 | 1 | 2 | 3 // Created | Active | Resolved | Recovered
 export type Outcome = 0 | 1 | 2 | 3 // None | Done | Cancel | RefundA
 
 export interface Agreement {
@@ -28,6 +28,7 @@ export const OUTCOME_REFUND_A = 3
 export const STATUS_CREATED = 0
 export const STATUS_ACTIVE = 1
 export const STATUS_RESOLVED = 2
+export const STATUS_RECOVERED = 3
 
 export function parseAgreement(
   id: number,
@@ -51,6 +52,7 @@ export function parseAgreement(
 export function agreementStatusLabel(status: AgreementStatus): string {
   if (status === STATUS_CREATED) return "Awaiting acceptance"
   if (status === STATUS_ACTIVE) return "Active"
+  if (status === STATUS_RECOVERED) return "Recovered"
   return "Resolved"
 }
 

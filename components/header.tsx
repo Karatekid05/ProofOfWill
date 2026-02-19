@@ -5,7 +5,9 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { Menu, X } from "lucide-react"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
-import { Button } from "@/components/ui/button"
+import { useAccount, useReadContract } from "wagmi"
+import { formatUnits } from "viem"
+import { USDC_ADDRESS, erc20Abi, USDC_DECIMALS } from "@/lib/contracts"
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -16,6 +18,21 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { address, isConnected } = useAccount()
+  const { data: usdcBalance } = useReadContract({
+    address: USDC_ADDRESS,
+    abi: erc20Abi,
+    functionName: "balanceOf",
+    args: address ? [address] : undefined,
+  })
+
+  const usdcFormatted =
+    usdcBalance !== undefined
+      ? Number(formatUnits(usdcBalance, USDC_DECIMALS)).toLocaleString("en-US", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        })
+      : null
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
@@ -47,6 +64,11 @@ export function Header() {
 
         <div className="hidden items-center gap-3 md:flex">
           <span className="text-[13px] text-muted-foreground">Arc Testnet</span>
+          {isConnected && usdcFormatted !== null && (
+            <span className="rounded-md border border-border bg-muted/50 px-2.5 py-1 font-mono text-xs text-foreground">
+              {usdcFormatted} USDC
+            </span>
+          )}
           <ConnectButton
             showBalance={false}
             chainStatus="icon"
@@ -82,6 +104,11 @@ export function Header() {
             ))}
             <div className="mt-2 flex flex-col gap-2">
               <span className="text-xs text-muted-foreground">Arc Testnet</span>
+              {isConnected && usdcFormatted !== null && (
+                <span className="rounded-md border border-border bg-muted/50 px-2.5 py-1 font-mono text-xs text-foreground">
+                  {usdcFormatted} USDC
+                </span>
+              )}
               <ConnectButton
                 showBalance={false}
                 chainStatus="icon"

@@ -23,8 +23,10 @@ contract DualConsensusVault {
     }
 
     mapping(uint256 => Agreement) public agreements;
+    /// @dev Optional: hash of title/description or IPFS doc for audit (0 = not set).
+    mapping(uint256 => bytes32) public agreementMetaHash;
 
-    event AgreementCreated(uint256 indexed id, address partyA, address partyB, uint256 amountA, uint256 amountB, uint256 deadline, Mode mode);
+    event AgreementCreated(uint256 indexed id, address partyA, address partyB, uint256 amountA, uint256 amountB, uint256 deadline, Mode mode, bytes32 metaHash);
     event AgreementAccepted(uint256 indexed id);
     event ResolutionSubmitted(uint256 indexed id, address party, Outcome outcome);
     event AgreementResolved(uint256 indexed id, Outcome outcome);
@@ -52,7 +54,32 @@ contract DualConsensusVault {
             resolutionA: Outcome.None,
             resolutionB: Outcome.None
         });
-        emit AgreementCreated(nextId, msg.sender, partyB, amountA, amountB, deadline, mode);
+        emit AgreementCreated(nextId, msg.sender, partyB, amountA, amountB, deadline, mode, bytes32(0));
+        nextId++;
+    }
+
+    /// @notice Create agreement with an on-chain commitment to title/description (e.g. keccak256 of doc or IPFS hash).
+    function createAgreementWithMeta(address partyB, uint256 amountA, uint256 amountB, uint256 deadline, Mode mode, bytes32 metaHash) external {
+        require(partyB != address(0) && partyB != msg.sender, "Invalid partyB");
+        require(deadline > block.timestamp, "Invalid deadline");
+        require(amountA > 0, "Amount A must be > 0");
+        if (mode == Mode.OneDeposit) require(amountB == 0, "OneDeposit amountB must be 0");
+        else require(amountB > 0, "BothDeposit amountB must be > 0");
+        require(usdc.transferFrom(msg.sender, address(this), amountA), "USDC transfer failed");
+
+        agreements[nextId] = Agreement({
+            partyA: msg.sender,
+            partyB: partyB,
+            amountA: amountA,
+            amountB: amountB,
+            deadline: deadline,
+            mode: mode,
+            status: 0,
+            resolutionA: Outcome.None,
+            resolutionB: Outcome.None
+        });
+        agreementMetaHash[nextId] = metaHash;
+        emit AgreementCreated(nextId, msg.sender, partyB, amountA, amountB, deadline, mode, metaHash);
         nextId++;
     }
 
@@ -97,7 +124,7 @@ contract DualConsensusVault {
         }
     }
 
-    function _resolve(uint256 id, Outcome outcome) internal {
+    function _resolve(uint256 id, Outcome outcome) internal virtual {
         Agreement storage a = agreements[id];
         a.status = 2;
         if (outcome == Outcome.Done) {

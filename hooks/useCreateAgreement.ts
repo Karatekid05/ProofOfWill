@@ -1,7 +1,7 @@
 "use client"
 
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi"
-import { parseUnits } from "viem"
+import { parseUnits, keccak256, encodePacked } from "viem"
 import {
   DUAL_CONSENSUS_VAULT_ADDRESS,
   USDC_ADDRESS,
@@ -33,16 +33,31 @@ export function useCreateAgreement() {
     amountA: string,
     amountB: string,
     deadlineTimestamp: number,
-    mode: 0 | 1
+    mode: 0 | 1,
+    meta?: { title: string; description: string }
   ) {
     const amountAWei = parseUnits(amountA, USDC_DECIMALS)
     const amountBWei = mode === MODE_BOTH_DEPOSIT ? parseUnits(amountB, USDC_DECIMALS) : 0n
-    createWrite.writeContract({
-      address: DUAL_CONSENSUS_VAULT_ADDRESS,
-      abi: dualConsensusVaultAbi,
-      functionName: "createAgreement",
-      args: [partyB, amountAWei, amountBWei, BigInt(deadlineTimestamp), mode],
-    })
+    const hasMeta = meta && (meta.title.trim() !== "" || meta.description.trim() !== "")
+    const metaHash = hasMeta
+      ? keccak256(encodePacked(["string", "string"], [meta!.title.trim(), meta!.description.trim()]))
+      : ("0x0000000000000000000000000000000000000000000000000000000000000000" as `0x${string}`)
+
+    if (hasMeta) {
+      createWrite.writeContract({
+        address: DUAL_CONSENSUS_VAULT_ADDRESS,
+        abi: dualConsensusVaultAbi,
+        functionName: "createAgreementWithMeta",
+        args: [partyB, amountAWei, amountBWei, BigInt(deadlineTimestamp), mode, metaHash],
+      })
+    } else {
+      createWrite.writeContract({
+        address: DUAL_CONSENSUS_VAULT_ADDRESS,
+        abi: dualConsensusVaultAbi,
+        functionName: "createAgreement",
+        args: [partyB, amountAWei, amountBWei, BigInt(deadlineTimestamp), mode],
+      })
+    }
   }
 
   return {

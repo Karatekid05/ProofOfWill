@@ -4,13 +4,15 @@ import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { ArrowRight, Loader2, ExternalLink, Copy } from "lucide-react"
-import { useAccount, useChainId } from "wagmi"
+import { useAccount, useChainId, usePublicClient } from "wagmi"
 import { arcTestnet } from "@/lib/arc-chain"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { useCreateAgreement } from "@/hooks/useCreateAgreement"
-import { HAS_DUAL_VAULT } from "@/lib/contracts"
+import { HAS_DUAL_VAULT, DUAL_CONSENSUS_VAULT_ADDRESS, dualConsensusVaultAbi } from "@/lib/contracts"
+import { setAgreementMeta } from "@/lib/agreement-meta"
 import { MODE_ONE_DEPOSIT, MODE_BOTH_DEPOSIT } from "@/lib/agreements"
 
 export function AgreementForm() {
@@ -28,8 +30,10 @@ export function AgreementForm() {
     error,
   } = useCreateAgreement()
 
-  const pendingCreate = useRef<{ partyB: string; amountA: string; amountB: string; deadline: string; mode: 0 | 1 } | null>(null)
+  const pendingCreate = useRef<{ partyB: string; amountA: string; amountB: string; deadline: string; mode: 0 | 1; title: string; description: string } | null>(null)
+  const createdMetaRef = useRef<{ title: string; description: string } | null>(null)
   const createSent = useRef(false)
+  const publicClient = usePublicClient()
 
   const [mode, setMode] = useState<0 | 1>(MODE_ONE_DEPOSIT)
   const [form, setForm] = useState({
@@ -37,36 +41,55 @@ export function AgreementForm() {
     amountA: "",
     amountB: "",
     deadline: "",
+    title: "",
+    description: "",
   })
 
   useEffect(() => {
     if (!isApproveSuccess || !pendingCreate.current || createSent.current) return
     createSent.current = true
-    const { partyB, amountA, amountB, deadline } = pendingCreate.current
+    const { partyB, amountA, amountB, deadline, title, description } = pendingCreate.current
+    createdMetaRef.current = title.trim() || description.trim() ? { title, description } : null
     const deadlineTs = Math.floor(new Date(deadline).getTime() / 1000)
     const partyBAddr = partyB.trim() as `0x${string}`
-    create(partyBAddr, amountA, amountB, deadlineTs, mode)
+    const meta = createdMetaRef.current ?? undefined
+    create(partyBAddr, amountA, amountB, deadlineTs, mode, meta)
     pendingCreate.current = null
   }, [isApproveSuccess, create, mode])
 
   useEffect(() => {
-    if (isCreateSuccess && createWrite.data) {
-      toast.success("Agreement created", {
-        description: "Share the link with the other party so they can accept.",
-        action: {
-          label: "View tx",
-          onClick: () => window.open(`${arcTestnet.blockExplorers.default.url}/tx/${createWrite.data}`, "_blank"),
-        },
-      })
-      setTimeout(() => router.push("/dashboard"), 2500)
-    }
-  }, [isCreateSuccess, createWrite.data, router])
+    if (!isCreateSuccess || !createWrite.data) return
+    ;(async () => {
+      if (createdMetaRef.current && publicClient) {
+        try {
+          const total = await publicClient.readContract({
+            address: DUAL_CONSENSUS_VAULT_ADDRESS,
+            abi: dualConsensusVaultAbi,
+            functionName: "totalAgreements",
+          })
+          const newId = Number(total) - 1
+          setAgreementMeta(newId, createdMetaRef.current)
+        } catch {
+          // ignore
+        }
+        createdMetaRef.current = null
+      }
+    })()
+    toast.success("Agreement created", {
+      description: "Share the link with the other party so they can accept.",
+      action: {
+        label: "View tx",
+        onClick: () => window.open(`${arcTestnet.blockExplorers.default.url}/tx/${createWrite.data}`, "_blank"),
+      },
+    })
+    setTimeout(() => router.push("/dashboard"), 2500)
+  }, [isCreateSuccess, createWrite.data, publicClient, router])
 
   useEffect(() => {
     if (error) toast.error(error.message)
   }, [error])
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
@@ -95,6 +118,8 @@ export function AgreementForm() {
       amountA: form.amountA,
       amountB: mode === MODE_BOTH_DEPOSIT ? form.amountB : "0",
       deadline: form.deadline,
+      title: form.title,
+      description: form.description,
     }
     approve(form.amountA)
   }
@@ -161,6 +186,39 @@ export function AgreementForm() {
           <p className="text-xs text-muted-foreground">
             They will need to connect this wallet to accept the agreement (and lock their stake if both deposit).
           </p>
+        </div>
+      </fieldset>
+
+      <fieldset className="flex flex-col gap-5">
+        <legend className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+          <span className="h-px w-4 bg-border" />
+          Title & description (optional)
+        </legend>
+        <p className="text-xs text-muted-foreground">
+          Stored on-chain as a hash for audit (e.g. scope of work). The other party will see this when they open the link.
+        </p>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="title">Title</Label>
+          <Input
+            id="title"
+            name="title"
+            placeholder="e.g. Website delivery – Homepage + CMS"
+            value={form.title}
+            onChange={handleChange}
+            className="text-sm"
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            name="description"
+            placeholder="e.g. Deliver responsive homepage and admin panel by deadline. Payment on both marking Done."
+            value={form.description}
+            onChange={handleChange}
+            rows={3}
+            className="resize-none text-sm"
+          />
         </div>
       </fieldset>
 

@@ -5,13 +5,13 @@ import "forge-std/Script.sol";
 import "../contracts/CommitmentVault.sol";
 import "../contracts/CommitmentFactory.sol";
 import "../contracts/DualConsensusVault.sol";
+import "../contracts/DualConsensusVaultV2.sol";
 
 // Arc Testnet USDC (ERC-20): https://docs.arc.network/arc/references/contract-addresses
 address constant ARC_USDC = 0x3600000000000000000000000000000000000000;
 
 contract DeployScript is Script {
-    function run() external returns (CommitmentVault vault, CommitmentFactory factory, DualConsensusVault dualVault) {
-        // Use --private-key flag or set PRIVATE_KEY env var (without 0x prefix)
+    function run() external returns (CommitmentVault vault, CommitmentFactory factory, DualConsensusVault dualVault, DualConsensusVaultV2 dualVaultV2) {
         vm.startBroadcast();
 
         vault = new CommitmentVault(ARC_USDC);
@@ -22,6 +22,13 @@ contract DeployScript is Script {
 
         dualVault = new DualConsensusVault(ARC_USDC);
         console.log("DualConsensusVault deployed at", address(dualVault));
+
+        // V2: same logic + emergency recovery (owner can refund stuck agreements after RECOVERY_DELAY)
+        address owner = vm.envOr("OWNER", address(0));
+        if (owner != address(0)) {
+            dualVaultV2 = new DualConsensusVaultV2(ARC_USDC, owner);
+            console.log("DualConsensusVaultV2 deployed at", address(dualVaultV2));
+        }
 
         vm.stopBroadcast();
     }
