@@ -10,23 +10,29 @@ import { type Commitment, getStatusLabel } from "@/lib/commitments"
 import { useAllCommitments } from "@/hooks/useCommitments"
 import { useResolveCommitment } from "@/hooks/useResolveCommitment"
 import { toast } from "sonner"
+import { arcTestnet } from "@/lib/arc-chain"
 
 const tabs = ["all", "active", "pending", "resolved"] as const
 type Tab = (typeof tabs)[number]
 
 export function DashboardView() {
   const { commitments: onchainCommitments, isLoading, refetch, hasVault } = useAllCommitments()
-  const { resolve, isPending: isResolving, isSuccess: resolveSuccess } = useResolveCommitment()
+  const { resolve, isPending: isResolving, isSuccess: resolveSuccess, hash: resolveHash } = useResolveCommitment()
   const [activeTab, setActiveTab] = useState<Tab>("all")
 
   const commitments = onchainCommitments
 
   useEffect(() => {
-    if (resolveSuccess && hasVault) {
-      toast.success("Commitment resolved onchain.")
+    if (resolveSuccess && hasVault && resolveHash) {
+      toast.success("Commitment resolved onchain.", {
+        action: {
+          label: "View",
+          onClick: () => window.open(`${arcTestnet.blockExplorers.default.url}/tx/${resolveHash}`, "_blank"),
+        },
+      })
       refetch()
     }
-  }, [resolveSuccess, hasVault, refetch])
+  }, [resolveSuccess, hasVault, refetch, resolveHash])
 
   function handleResolve(id: number, success: boolean) {
     if (!hasVault) return

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { toast } from "sonner"
-import { CheckCircle, XCircle } from "lucide-react"
+import { CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { type Commitment, getStatusLabel, getTimeRemaining } from "@/lib/commitments"
 
@@ -104,23 +104,37 @@ export function CommitmentCard({ commitment, onResolve, refetch, isResolving: is
 
         {status === "pending" && (
           <div className="flex items-center gap-2">
+            {isResolving && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Resolving...
+              </span>
+            )}
             <Button
               variant="outline"
               size="sm"
               disabled={isResolving}
               onClick={() => handleResolve(false)}
-              className="h-7 rounded-sm border-destructive/30 px-3 text-xs text-destructive hover:bg-destructive/10"
+              className="h-7 rounded-sm border-destructive/30 px-3 text-xs text-destructive hover:bg-destructive/10 disabled:opacity-50"
             >
-              <XCircle className="mr-1 h-3 w-3" />
+              {isResolving ? (
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+              ) : (
+                <XCircle className="mr-1 h-3 w-3" />
+              )}
               Fail
             </Button>
             <Button
               size="sm"
               disabled={isResolving}
               onClick={() => handleResolve(true)}
-              className="h-7 rounded-sm bg-primary px-3 text-xs text-primary-foreground hover:bg-primary/90"
+              className="h-7 rounded-sm bg-primary px-3 text-xs text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
-              <CheckCircle className="mr-1 h-3 w-3" />
+              {isResolving ? (
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+              ) : (
+                <CheckCircle className="mr-1 h-3 w-3" />
+              )}
               Succeed
             </Button>
           </div>

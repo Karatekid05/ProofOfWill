@@ -3,26 +3,35 @@
 import { useReadContract, useReadContracts } from "wagmi"
 import { useMemo } from "react"
 import {
+  COMMITMENT_CONTRACT_ADDRESS,
   COMMITMENT_VAULT_ADDRESS,
+  USE_FACTORY,
   commitmentVaultAbi,
+  commitmentFactoryAbi,
   USDC_DECIMALS,
 } from "@/lib/contracts"
 import type { Commitment } from "@/lib/commitments"
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
+// Use factory ABI if factory is available, otherwise vault ABI
+const contractAbi = USE_FACTORY ? commitmentFactoryAbi : commitmentVaultAbi
+
 export function useNextId() {
+  // Factory uses totalCommitments(), vault uses nextId()
+  const functionName = USE_FACTORY ? "totalCommitments" : "nextId"
+  
   return useReadContract({
-    address: COMMITMENT_VAULT_ADDRESS,
-    abi: commitmentVaultAbi,
-    functionName: "nextId",
+    address: USE_FACTORY ? COMMITMENT_CONTRACT_ADDRESS : COMMITMENT_VAULT_ADDRESS,
+    abi: contractAbi,
+    functionName: functionName as "nextId" | "totalCommitments",
   })
 }
 
 export function useCommitment(id: number) {
   return useReadContract({
-    address: COMMITMENT_VAULT_ADDRESS,
-    abi: commitmentVaultAbi,
+    address: COMMITMENT_CONTRACT_ADDRESS,
+    abi: contractAbi,
     functionName: "getCommitment",
     args: [BigInt(id)],
   })
@@ -58,8 +67,8 @@ export function useAllCommitments(): {
   const contracts = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => ({
-        address: COMMITMENT_VAULT_ADDRESS,
-        abi: commitmentVaultAbi,
+        address: COMMITMENT_CONTRACT_ADDRESS,
+        abi: contractAbi,
         functionName: "getCommitment" as const,
         args: [BigInt(i)] as const,
       })),
@@ -82,7 +91,7 @@ export function useAllCommitments(): {
     refetchList()
   }
 
-  const hasVault = COMMITMENT_VAULT_ADDRESS !== ZERO_ADDRESS
+  const hasVault = COMMITMENT_CONTRACT_ADDRESS !== ZERO_ADDRESS
 
   return {
     commitments,

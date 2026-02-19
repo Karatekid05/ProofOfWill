@@ -7,7 +7,7 @@
 | Layer | Status |
 |-------|--------|
 | **Frontend** | Next.js, Create form, Dashboard (Active / Pending / Resolved), Rainbow Kit + Arc Testnet |
-| **Contracts** | `CommitmentVault.sol` (create, resolve, USDC lock/refund/penalty) |
+| **Contracts** | `CommitmentVault.sol` + `CommitmentFactory.sol` (create, resolve, USDC lock/refund/penalty) |
 | **Wallet** | Rainbow Kit + wagmi v2 + viem (injected wallets only, no WalletConnect), Arc Testnet |
 | **Backend** | None (onchain-only) |
 
@@ -20,21 +20,22 @@
    pnpm dev
    ```
 
-2. **Deploy vault (once)**  
+2. **Deploy contracts (once)**  
    With [Foundry](https://book.getfoundry.sh):
    ```bash
    forge install foundry-rs/forge-std
    export PRIVATE_KEY=0x...  # ⚠️ Never commit or share your private key!
    forge script scripts/Deploy.s.sol --rpc-url https://rpc.testnet.arc.network --broadcast -vvv
    ```
-   The script will output the deployed contract address. Copy it to `NEXT_PUBLIC_COMMITMENT_VAULT_ADDRESS` in `.env`.
+   The script will output both `CommitmentVault` and `CommitmentFactory` addresses. Copy the Factory address to `NEXT_PUBLIC_COMMITMENT_FACTORY_ADDRESS` in `.env` (or use vault address for backward compatibility).
 
 3. **Get testnet USDC**  
    [Circle Faucet](https://faucet.circle.com) → select **Arc Testnet** and request USDC.
 
 ## Env vars
 
-- `NEXT_PUBLIC_COMMITMENT_VAULT_ADDRESS` — Deployed `CommitmentVault` on Arc Testnet. Required to use the app.
+- `NEXT_PUBLIC_COMMITMENT_FACTORY_ADDRESS` — Deployed `CommitmentFactory` on Arc Testnet (preferred). App uses Factory if set, otherwise falls back to vault.
+- `NEXT_PUBLIC_COMMITMENT_VAULT_ADDRESS` — Deployed `CommitmentVault` on Arc Testnet (fallback for backward compatibility). Required if Factory not set.
 
 ## Flow
 
@@ -49,9 +50,10 @@
 - Explorer: https://testnet.arcscan.app
 - USDC (ERC-20): `0x3600000000000000000000000000000000000000` (6 decimals)
 
-## Contract
+## Contracts
 
-- `contracts/CommitmentVault.sol` — single contract: receive USDC, store commitments, resolve and payout. No separate Factory in this MVP.
+- `contracts/CommitmentVault.sol` — core contract: receive USDC, store commitments, resolve and payout.
+- `contracts/CommitmentFactory.sol` — factory contract: manages commitment creation through the vault, provides centralized interface for future extensibility.
 
 ## What it does
 
