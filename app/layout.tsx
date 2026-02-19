@@ -9,8 +9,9 @@ const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
 
 export const metadata: Metadata = {
-  title: 'Proof of Will — Programmable Capital Commitments',
-  description: 'Lock USDC to your goals. Succeed and get refunded. Fail and face the penalty. Onchain accountability for builders, freelancers, and DAOs.',
+  applicationName: 'DualAgree',
+  title: 'DualAgree — Money only moves when both agree',
+  description: 'Two-party escrow onchain: freelancers & clients, or bets between friends. You deposit USDC; the other party accepts. Funds release only when both submit the same outcome. No middlemen.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1c1a16',
+  themeColor: '#0f0f0f',
 }
 
 export default function RootLayout({

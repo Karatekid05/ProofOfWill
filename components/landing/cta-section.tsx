@@ -8,11 +8,10 @@ export function CtaSection() {
         <div className="flex flex-col items-start gap-8 md:flex-row md:items-center md:justify-between">
           <div className="max-w-lg">
             <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-              Ready to put skin in the game?
+              Money only moves when both agree.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Create your first commitment in under a minute.
-              All you need is a wallet and USDC.
+              Create an agreement or bet, lock USDC on Arc Testnet. On resolution, both parties must submit the same decision. Today: single verifier (MVP). Coming: dual consensus — one deposits / one receives, or both deposit / one receives (e.g. freelancer guarantee).
             </p>
           </div>
           <Link

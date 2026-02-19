@@ -23,6 +23,15 @@ export const COMMITMENT_CONTRACT_ADDRESS =
 
 export const USE_FACTORY = COMMITMENT_FACTORY_ADDRESS !== "0x0000000000000000000000000000000000000000"
 
+/**
+ * DualConsensusVault: two-party agreements (one-deposit or both-deposit).
+ */
+export const DUAL_CONSENSUS_VAULT_ADDRESS =
+  (process.env.NEXT_PUBLIC_DUAL_CONSENSUS_VAULT_ADDRESS as `0x${string}`) ||
+  ("0x0000000000000000000000000000000000000000" as `0x${string}`)
+
+export const HAS_DUAL_VAULT = DUAL_CONSENSUS_VAULT_ADDRESS !== "0x0000000000000000000000000000000000000000"
+
 export const USDC_ADDRESS = ARC_TESTNET_USDC as `0x${string}`
 
 /** USDC uses 6 decimals on Arc (ERC-20 interface) */
@@ -251,4 +260,50 @@ export const erc20Abi = [
     stateMutability: "view",
     type: "function",
   },
+] as const
+
+export const dualConsensusVaultAbi = [
+  { inputs: [{ name: "_usdc", type: "address" }], stateMutability: "nonpayable", type: "constructor" },
+  {
+    inputs: [
+      { name: "partyB", type: "address" },
+      { name: "amountA", type: "uint256" },
+      { name: "amountB", type: "uint256" },
+      { name: "deadline", type: "uint256" },
+      { name: "mode", type: "uint8" },
+    ],
+    name: "createAgreement",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  { inputs: [{ name: "id", type: "uint256" }], name: "accept", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "id", type: "uint256" }], name: "acceptAndLock", outputs: [], stateMutability: "nonpayable", type: "function" },
+  {
+    inputs: [{ name: "id", type: "uint256" }, { name: "outcome", type: "uint8" }],
+    name: "submitResolution",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ name: "id", type: "uint256" }],
+    name: "getAgreement",
+    outputs: [
+      { name: "partyA", type: "address" },
+      { name: "partyB", type: "address" },
+      { name: "amountA", type: "uint256" },
+      { name: "amountB", type: "uint256" },
+      { name: "deadline", type: "uint256" },
+      { name: "mode", type: "uint8" },
+      { name: "status", type: "uint8" },
+      { name: "resolutionA", type: "uint8" },
+      { name: "resolutionB", type: "uint8" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  { inputs: [{ name: "id", type: "uint256" }], name: "agreementExists", outputs: [{ name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "totalAgreements", outputs: [{ name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "usdc", outputs: [{ name: "", type: "address" }], stateMutability: "view", type: "function" },
 ] as const

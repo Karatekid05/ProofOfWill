@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/landing/hero-section"
 import { HowItWorksSection } from "@/components/landing/how-it-works-section"
 import { UseCasesSection } from "@/components/landing/use-cases-section"
 import { CtaSection } from "@/components/landing/cta-section"
+import { RoadmapSection } from "@/components/landing/roadmap-section"
 import { Footer } from "@/components/footer"
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
         <HeroSection />
         <HowItWorksSection />
         <UseCasesSection />
+        <RoadmapSection />
         <CtaSection />
       </main>
       <Footer />

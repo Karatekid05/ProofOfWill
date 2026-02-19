@@ -15,20 +15,18 @@ export function HeroSection() {
             <div className="mb-6 flex items-center gap-3">
               <span className="h-px flex-1 max-w-12 bg-primary" />
               <span className="font-mono text-xs uppercase tracking-widest text-primary">
-                Onchain Accountability
+                Escrow where both must agree
               </span>
             </div>
 
             <h1 className="text-4xl font-bold leading-[1.1] tracking-tight text-foreground md:text-6xl lg:text-[4.5rem]">
-              Back your words
+              Money only moves
               <br />
-              with <span className="text-primary">capital.</span>
+              when <span className="text-primary">both</span> agree.
             </h1>
 
             <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-              Lock USDC into an onchain vault tied to a commitment.
-              Hit your target, get refunded. Miss it, the capital moves
-              to a penalty address. No middlemen, no excuses.
+              Two consensus types: one party deposits and the other receives (e.g. client locks pay, freelancer gets it when both mark done). Or both deposit and one receives — like a freelancer putting up a guarantee so the client can get both stakes back if the work isn&apos;t delivered. Bets between friends: both lock the same amount; both must agree on the winner. No consensus, funds stay locked.
             </p>
 
             <div className="mt-10 flex items-center gap-4">
@@ -36,33 +34,33 @@ export function HeroSection() {
                 href="/create"
                 className="inline-flex h-11 items-center gap-2 rounded-sm bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Create Commitment
+                Create agreement
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/dashboard"
                 className="inline-flex h-11 items-center px-1 text-sm font-medium text-muted-foreground underline underline-offset-4 decoration-border transition-colors hover:text-foreground hover:decoration-foreground"
               >
-                View Dashboard
+                View dashboard
               </Link>
             </div>
           </div>
 
-          {/* Right side -- live protocol stats styled as a terminal/ticker */}
+          {/* Right side -- network info */}
           <div className="w-full shrink-0 lg:max-w-xs">
             <div className="rounded-sm border border-border bg-card">
               <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                 <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-                  Protocol Stats
+                  Network
                 </span>
               </div>
               <div className="flex flex-col divide-y divide-border">
                 {[
-                  { label: "TVL", value: "$2.4M" },
-                  { label: "Commitments", value: "1,247" },
-                  { label: "Success rate", value: "89%" },
-                  { label: "Avg stake", value: "$1,920" },
+                  { label: "Chain", value: "Arc Testnet" },
+                  { label: "Asset", value: "USDC" },
+                  { label: "Resolution", value: "Dual consensus" },
+                  { label: "Backend", value: "None" },
                 ].map((stat) => (
                   <div key={stat.label} className="flex items-center justify-between px-4 py-3">
                     <span className="text-xs text-muted-foreground">{stat.label}</span>

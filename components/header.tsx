@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/create", label: "New Commitment" },
+  { href: "/create/agreement", label: "New agreement" },
   { href: "/dashboard", label: "Dashboard" },
 ]
 
@@ -22,10 +22,10 @@ export function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-primary font-mono text-sm font-bold text-primary-foreground">
-            {"PW"}
+            DA
           </div>
           <span className="text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
-            proof of will
+            DualAgree
           </span>
         </Link>
 
