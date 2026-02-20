@@ -86,6 +86,15 @@ Do not commit `.env`, `.env.local`, or any file containing `PRIVATE_KEY` or othe
 
 Agreements can store an optional **meta hash** (e.g. title/description) on-chain via `createAgreementWithMeta` for auditability.
 
+**Verified on Arc Testnet (transparency)** — All deployed contracts are verified on the explorer; you can inspect source and activity:
+
+| Contract | Address |
+|----------|---------|
+| DualConsensusVault V2 | [0x26f0…511F](https://testnet.arcscan.app/address/0x26f096B5a3D8EaB58BE80D50267de82a5b9d511F) |
+| DualConsensusVault V1 | [0xedd4…e8De](https://testnet.arcscan.app/address/0xedd42B5DfBBeBe56A47d3721a97B4d7f5d3De8De) |
+| CommitmentVault | [0xc1f6…34b2](https://testnet.arcscan.app/address/0xc1f6d99858Cfd2eddbB02bB3D16a9D862F8534b2) |
+| CommitmentFactory | [0x29D7…6a2](https://testnet.arcscan.app/address/0x29D7302a94812FaD09843143557d29515565a6a2) |
+
 ---
 
 ## Arc Testnet
